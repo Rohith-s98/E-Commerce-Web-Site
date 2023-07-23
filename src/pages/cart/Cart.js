@@ -44,6 +44,7 @@ const Cart = () => {
   };
 
   useEffect(() => {
+    
     dispatch(CALCULATE_SUBTOTAL());
     dispatch(CALCULATE_TOTAL_QUANTITY());
     dispatch(SAVE_URL(""));

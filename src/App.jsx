@@ -18,7 +18,7 @@ import ReviewProducts from "./components/reviewProducts/ReviewProducts";
 import NotFound from "./pages/notFound/NotFound";
 
 function App() {
-  console.log(process.env)
+  console.log(process.env.REACT_APP_STRIPE_PK)
   return ( 
     <>
       <BrowserRouter>

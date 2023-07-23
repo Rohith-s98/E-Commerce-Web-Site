@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-// import {
-//   PaymentElement,
-//   useStripe,
-//   useElements,
-// } from "@stripe/react-stripe-js";
+import {
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 import styles from "./CheckoutForm.module.scss";
 import Card from "../card/Card";
 import CheckoutSummary from "../checkoutSummary/CheckoutSummary";
@@ -24,8 +24,8 @@ import { useNavigate } from "react-router-dom";
 const CheckoutForm = () => {
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  // const stripe = useStripe();
-  // const elements = useElements();
+  const stripe = useStripe();
+  const elements = useElements();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,19 +36,19 @@ const CheckoutForm = () => {
   const cartTotalAmount = useSelector(selectCartTotalAmount);
   const shippingAddress = useSelector(selectShippingAddress);
 
-  // useEffect(() => {
-  //   if (!stripe) {
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!stripe) {
+      return;
+    }
 
-  //   const clientSecret = new URLSearchParams(window.location.search).get(
-  //     "payment_intent_client_secret"
-  //   );
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      "payment_intent_client_secret"
+    );
 
-  //   if (!clientSecret) {
-  //     return;
-  //   }
-  // }, [stripe]);
+    if (!clientSecret) {
+      return;
+    }
+  }, [stripe]);
 
   // Save order to Order History
   const saveOrder = () => {
@@ -76,49 +76,49 @@ const CheckoutForm = () => {
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setMessage(null);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage(null);
 
-  //   if (!stripe || !elements) {
-  //     return;
-  //   }
+    if (!stripe || !elements) {
+      return;
+    }
 
-  //   setIsLoading(true);
+    setIsLoading(true);
 
-  //   const confirmPayment = await stripe
-  //     .confirmPayment({
-  //       elements,
-  //       confirmParams: {
-  //         // Make sure to change this to your payment completion page
-  //         return_url: "http://localhost:3000/checkout-success",
-  //       },
-  //       redirect: "if_required",
-  //     })
-  //     .then((result) => {
-  //       // ok - paymentIntent // bad - error
-  //       if (result.error) {
-  //         toast.error(result.error.message);
-  //         setMessage(result.error.message);
-  //         return;
-  //       }
-  //       if (result.paymentIntent) {
-  //         if (result.paymentIntent.status === "succeeded") {
-  //           setIsLoading(false);
-  //           toast.success("Payment successful");
-  //           saveOrder();
-  //         }
-  //       }
-  //     });
+    const confirmPayment = await stripe
+      .confirmPayment({
+        elements,
+        confirmParams: {
+          // Make sure to change this to your payment completion page
+          return_url: "http://localhost:3000/checkout-success",
+        },
+        redirect: "if_required",
+      })
+      .then((result) => {
+        // ok - paymentIntent // bad - error
+        if (result.error) {
+          toast.error(result.error.message);
+          setMessage(result.error.message);
+          return;
+        }
+        if (result.paymentIntent) {
+          if (result.paymentIntent.status === "succeeded") {
+            setIsLoading(false);
+            toast.success("Payment successful");
+            saveOrder();
+          }
+        }
+      });
 
-  //   setIsLoading(false);
-  // };
+    setIsLoading(false);
+  };
 
   return (
     <section>
       <div className={`container ${styles.checkout}`}>
         <h2>Checkout</h2>
-        <form onSubmit={saveOrder}>
+        <form onSubmit={handleSubmit}>
           <div>
             <Card cardClass={styles.card}>
               <CheckoutSummary />
@@ -127,9 +127,9 @@ const CheckoutForm = () => {
           <div>
             <Card cardClass={`${styles.card} ${styles.pay}`}>
               <h3>Stripe Checkout</h3>
-              {/* <PaymentElement id={styles["payment-element"]} /> */}
+              <PaymentElement id={styles["payment-element"]} />
               <button
-                // disabled={isLoading || !stripe || !elements}
+                disabled={isLoading || !stripe || !elements}
                 id="submit"
                 className={styles.button}
               >
